@@ -1,0 +1,6 @@
+@eSignUpEBSAPI_HostAddress = http://localhost:5038
+
+GET {{eSignUpEBSAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
