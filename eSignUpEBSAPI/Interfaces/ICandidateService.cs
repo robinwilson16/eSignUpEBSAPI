@@ -1,4 +1,5 @@
 using eSignUpEBSAPI.Models;
+using eSignUpEBSAPI.Models.Candidates;
 
 namespace eSignUpEBSAPI.Interfaces
 {

@@ -1,5 +1,7 @@
 using eSignUpEBSAPI.Data;
+using eSignUpEBSAPI.Helpers;
 using eSignUpEBSAPI.Interfaces;
+using eSignUpEBSAPI.Models;
 using eSignUpEBSAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
@@ -22,49 +24,18 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-//Add Services Here
+// Add Services Here
 builder.Services.AddScoped<ICandidateService, CandidateService>();
 
-//Get connection string elements to asemble
-var databaseSettings = builder.Configuration.GetSection("DatabaseConnection");
-var server = databaseSettings["Server"];
-var database = databaseSettings["Database"];
-var useWindowsAuth = databaseSettings.GetValue<bool>("UseWindowsAuth");
-var username = databaseSettings["Username"];
-var password = databaseSettings["Password"];
-
-var conStrBuilder = new SqlConnectionStringBuilder(
-    builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
-
-//Comment out for EF Core updates
-var connectionStringExtra = "";
-connectionStringExtra += "Server=" + server + ";";
-connectionStringExtra += "Database=" + database + ";";
-connectionStringExtra += "User ID=" + username + ";";
-connectionStringExtra += "Password=" + password + ";";
-
-//conStrBuilder.DataSource = server;
-//conStrBuilder.InitialCatalog = database;
-
-if (useWindowsAuth == true)
-{
-    conStrBuilder.IntegratedSecurity = useWindowsAuth;
-}
-else
-{
-    conStrBuilder.UserID = username;
-    conStrBuilder.Password = password;
-}
-//End Comment out for EF Core updates
-
-var connectionString = connectionStringExtra + conStrBuilder.ConnectionString;
-
-Console.WriteLine(connectionString);
-//Console.ReadKey();
+// Database Connections
+string? connectionStringMIS = DatabaseHelper.GetConnectionString("DatabaseConnectionMIS", builder.Configuration);
+string? connectionStringESignUp = DatabaseHelper.GetConnectionString("DatabaseConnectionESignUp", builder.Configuration);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionStringMIS));
 
+builder.Services.AddDbContext<ExportCandidatesDbContext>(options =>
+    options.UseSqlServer(connectionStringESignUp));
 
 //Allow access from another URL
 var origins = builder.Configuration.GetSection("APIEndpoints").Get<string[]>();

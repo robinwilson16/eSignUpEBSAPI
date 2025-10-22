@@ -1,5 +1,5 @@
 ﻿using eSignUpEBSAPI.Interfaces;
-using eSignUpEBSAPI.Models;
+using eSignUpEBSAPI.Models.Candidates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;

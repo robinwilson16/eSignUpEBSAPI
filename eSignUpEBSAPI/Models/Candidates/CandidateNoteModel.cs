@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace eSignUpEBSAPI.Models
+namespace eSignUpEBSAPI.Models.Candidates
 {
     public class CandidateNoteModel
     {

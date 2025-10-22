@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 using System.Runtime.ConstrainedExecution;
 
-namespace eSignUpEBSAPI.Models
+namespace eSignUpEBSAPI.Models.Candidates
 {
     public class CandidateModel
     {
@@ -13,7 +14,7 @@ namespace eSignUpEBSAPI.Models
         public string? StudentID { get; set; }
 
         [StringLength(10)]
-        public long? ULN { get; set; }
+        public string? ULN { get; set; }
         public string? Title { get; set; }
         public int? ListCandidateTitleID { get; set; }
         public string? Surname { get; set; }

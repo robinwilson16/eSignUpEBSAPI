@@ -1,6 +1,7 @@
 ﻿using eSignUpEBSAPI.Data;
 using eSignUpEBSAPI.Interfaces;
 using eSignUpEBSAPI.Models;
+using eSignUpEBSAPI.Models.Candidates;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
