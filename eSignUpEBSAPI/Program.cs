@@ -11,6 +11,16 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ensure Console (and Debug) providers are present
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// add category filters for endpoint routing
+builder.Logging.AddFilter("Microsoft.AspNetCore.Routing", LogLevel.Debug);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Routing.Matching", LogLevel.Debug);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Routing.EndpointMiddleware", LogLevel.Debug);
+
 //Add Graph API
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
@@ -26,6 +36,7 @@ builder.Services.AddOpenApi();
 
 // Add Services Here
 builder.Services.AddScoped<ICandidateService, CandidateService>();
+builder.Services.AddScoped<IExportCandidateService, ExportCandidateService>();
 
 // Database Connections
 string? connectionStringMIS = DatabaseHelper.GetConnectionString("DatabaseConnectionMIS", builder.Configuration);

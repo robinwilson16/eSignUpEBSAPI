@@ -1,5 +1,5 @@
 ﻿using eSignUpEBSAPI.Interfaces;
-using eSignUpEBSAPI.Models.Candidates;
+using eSignUpEBSAPI.Models.ExportCandidates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -10,11 +10,11 @@ namespace eSignUpEBSAPI.Controllers
     [ApiController]
     [Route("[controller]")]
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-    public class CandidateController : ControllerBase
+    public class ExportCandidateController : ControllerBase
     {
-        private readonly ICandidateService _apiService;
+        private readonly IExportCandidateService _apiService;
 
-        public CandidateController(ICandidateService apiService)
+        public ExportCandidateController(IExportCandidateService apiService)
         {
             _apiService = apiService;
         }
@@ -111,7 +111,6 @@ namespace eSignUpEBSAPI.Controllers
             if (existingRecord is not null)
                 return BadRequest("Record Already Exists");
 
-
             if (newRecord.ID > 0)
                 Record = await _apiService.AddWithID(newRecord);
             else
@@ -121,7 +120,7 @@ namespace eSignUpEBSAPI.Controllers
                 return BadRequest("Unable to Create Record");
 
             Console.WriteLine($"\nCreated Record ID: {Record.ID}");
-            var location = Url.Action(nameof(GetAsync), "Candidate", new { recordID = Record.ID }, Request.Scheme);
+            var location = Url.Action(nameof(GetAsync), "ExportCandidate", new { recordID = Record.ID }, Request.Scheme);
 
             return Created(location ?? string.Empty, Record);
         }
@@ -143,7 +142,7 @@ namespace eSignUpEBSAPI.Controllers
                 return BadRequest("Unable to Create Records");
 
             Console.WriteLine($"\nCreated Record IDs: {Records.Select(r => r.ID).ToArray()}");
-            var location = Url.Action(nameof(GetManyAsync), "Candidate", new { ids = Records.Select(r => r.ID).ToArray() }, Request.Scheme);
+            var location = Url.Action(nameof(GetManyAsync), "ExportCandidate", new { ids = Records.Select(r => r.ID).ToArray() }, Request.Scheme);
 
             return Created(location ?? string.Empty, Records);
         }
@@ -168,7 +167,7 @@ namespace eSignUpEBSAPI.Controllers
                 return BadRequest("Unable to Update Record");
 
             Console.WriteLine($"\nUpdated Record ID: {Record.ID}");
-            var location = Url.Action(nameof(GetAsync), "Candidate", new { recordID = Record.ID }, Request.Scheme);
+            var location = Url.Action(nameof(GetAsync), "ExportCandidate", new { recordID = Record.ID }, Request.Scheme);
 
             return Accepted(location ?? string.Empty, Record);
         }
@@ -189,7 +188,7 @@ namespace eSignUpEBSAPI.Controllers
                 return BadRequest("Unable to Update Records");
 
             Console.WriteLine($"\nUpdated Record IDs: {Records.Select(r => r.ID).ToArray()}");
-            var location = Url.Action(nameof(GetManyAsync), "Candidate", new { ids = Records.Select(r => r.ID).ToArray() }, Request.Scheme);
+            var location = Url.Action(nameof(GetManyAsync), "ExportCandidate", new { ids = Records.Select(r => r.ID).ToArray() }, Request.Scheme);
 
             return Accepted(location ?? string.Empty, Records);
         }
@@ -212,7 +211,7 @@ namespace eSignUpEBSAPI.Controllers
                 return BadRequest("Unable to Delete Record");
 
             Console.WriteLine($"\nDeleted Record ID: {Record.ID}");
-            var location = Url.Action(nameof(GetAsync), "Candidate", new { recordID = Record.ID }, Request.Scheme);
+            var location = Url.Action(nameof(GetAsync), "ExportCandidate", new { recordID = Record.ID }, Request.Scheme);
 
             return Accepted(location ?? string.Empty, Record);
         }

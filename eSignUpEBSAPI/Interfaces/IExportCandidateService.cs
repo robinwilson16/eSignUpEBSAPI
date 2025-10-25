@@ -1,9 +1,9 @@
 using eSignUpEBSAPI.Models;
-using eSignUpEBSAPI.Models.Candidates;
+using eSignUpEBSAPI.Models.ExportCandidates;
 
 namespace eSignUpEBSAPI.Interfaces
 {
-    public interface ICandidateService
+    public interface IExportCandidateService
     {
         // Properties (optional - expose read-only)
         List<CandidateModel>? Candidates { get; }

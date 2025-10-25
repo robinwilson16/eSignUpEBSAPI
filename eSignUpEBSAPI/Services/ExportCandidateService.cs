@@ -2,7 +2,7 @@
 using eSignUpEBSAPI.Helpers;
 using eSignUpEBSAPI.Interfaces;
 using eSignUpEBSAPI.Models;
-using eSignUpEBSAPI.Models.Candidates;
+using eSignUpEBSAPI.Models.ExportCandidates;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,21 +11,17 @@ using System.Data.Common;
 
 namespace eSignUpEBSAPI.Services
 {
-    public class CandidateService : ICandidateService
+    public class ExportCandidateService : IExportCandidateService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ExportCandidatesDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger<CandidateService> _logger;
 
         public List<CandidateModel>? Candidates { get; set; }
         public CandidateModel? Candidate { get; set; }
-        private List<CandidateNoteModel>? CandidateNotes { get; set; }
-        private List<CandidateExtraFieldModel>? CandidateExtraFields { get; set; }
-        private List<CandidateQualificationModel>? CandidateQualifications { get; set; }
-        private List<CandidateDisabilityLearningDifficultyResultModel>? CandidateDisabilityLearningDifficultyResults { get; set; }
 
-        public CandidateService(
-            ApplicationDbContext context, 
+        public ExportCandidateService(
+            ExportCandidatesDbContext context, 
             IConfiguration configuration,
             ILogger<CandidateService> logger)
         {
@@ -37,8 +33,6 @@ namespace eSignUpEBSAPI.Services
             exportModel = _configuration.GetSection("Export").Get<SettingsExportModel>() ?? new SettingsExportModel();
 
             string? academicYear = exportModel.AcademicYear;
-            int? candidateRegistrationStatusID = exportModel.CandidateRegistrationStatusID;
-            string? studentType = exportModel.StudentType;
 
             //Better to use async methods to avoid blocking and call stored procedure in body
 
@@ -62,90 +56,16 @@ namespace eSignUpEBSAPI.Services
         {
             //Call this method if not pulling in synchronously in the constructor
             //Async is better for performance when dealing with large datasets
-            SettingsExportModel exportModel = new SettingsExportModel();
-            exportModel = _configuration.GetSection("Export").Get<SettingsExportModel>() ?? new SettingsExportModel();
-
-            string? academicYear = exportModel.AcademicYear;
-            int? candidateRegistrationStatusID = exportModel.CandidateRegistrationStatusID;
-            string? studentType = exportModel.StudentType;
-            FormattableString sql = null!;
 
             try
             {
-                if (exportModel is not null && academicYear != null && candidateRegistrationStatusID > 0 && studentType != null)
-                {
-                    sql = $@"
-                    EXEC SPR_ESU_ESignUpCandidate 
-                        @AcademicYear = {academicYear}, 
-                        @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                        @StudentType = {studentType}";
-
-                    Candidates = await _context.Candidate
-                        .FromSqlInterpolated(sql)
-                        //.AsNoTracking()
-                        .ToListAsync();
-
-                    //Bring in related data
-                    if (Candidates != null)
-                    {
-                        sql = $@"
-                        EXEC SPR_ESU_ESignUpCandidateNote 
-                            @AcademicYear = {academicYear}, 
-                            @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                            @StudentType = {studentType}";
-
-                        CandidateNotes = await _context.CandidateNote
-                            .FromSqlInterpolated(sql)
-                            //.AsNoTracking()
-                            .ToListAsync();
-                    }
-
-                    if (Candidates != null)
-                    {
-                        sql = $@"
-                        EXEC SPR_ESU_ESignUpCandidateExtraField 
-                            @AcademicYear = {academicYear}, 
-                            @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                            @StudentType = {studentType}";
-
-                        CandidateExtraFields = await _context.CandidateExtraField
-                            .FromSqlInterpolated(sql)
-                            //.AsNoTracking()
-                            .ToListAsync();
-                    }
-
-                    if (Candidates != null)
-                    {
-                        sql = $@"
-                        EXEC SPR_ESU_ESignUpCandidateQualification 
-                            @AcademicYear = {academicYear}, 
-                            @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                            @StudentType = {studentType}";
-
-                        CandidateQualifications = await _context.CandidateQualification
-                            .FromSqlInterpolated(sql)
-                            //.AsNoTracking()
-                            .ToListAsync();
-                    }
-
-                    if (Candidates != null)
-                    {
-                        sql = $@"
-                        EXEC SPR_ESU_ESignUpCandidateDisabilityLearningDifficultyResult 
-                            @AcademicYear = {academicYear}, 
-                            @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                            @StudentType = {studentType}";
-
-                        CandidateDisabilityLearningDifficultyResults = await _context.CandidateDisabilityLearningDifficultyResult
-                            .FromSqlInterpolated(sql)
-                            //.AsNoTracking()
-                            .ToListAsync();
-                    }
-                }
+                Candidates = await _context.Candidate
+                    .AsNoTracking()
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting Candidates (AcademicYear: {academicYear}, CandidateRegistrationStatusID: {candidateRegistrationStatusID}, StudentType: {studentType})");
+                _logger.LogError(ex, $"Error getting Candidates");
                 throw; // let the middleware return a formatted response
             }
 
@@ -156,35 +76,17 @@ namespace eSignUpEBSAPI.Services
 
         public async Task<CandidateModel?> GetAsync(int recordID)
         {
-            SettingsExportModel exportModel = new SettingsExportModel();
-            exportModel = _configuration.GetSection("Export").Get<SettingsExportModel>() ?? new SettingsExportModel();
-
-            string? academicYear = exportModel.AcademicYear;
-            int? candidateRegistrationStatusID = exportModel.CandidateRegistrationStatusID;
-            string? studentType = exportModel.StudentType;
-            FormattableString sql = null!;
 
             try
             {
-                if (exportModel is not null && academicYear != null && candidateRegistrationStatusID > 0 && studentType != null)
-                    sql =
-                     $@"
-                    EXEC SPR_ESU_ESignUpCandidate 
-                        @AcademicYear = {academicYear}, 
-                        @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                        @StudentType = {studentType},
-                        @StudentRefs = {recordID.ToString()}";
-
                 Candidate = await _context.Candidate
-                    .FromSqlInterpolated(sql)
                     .AsNoTracking()
+                    .Where(c => c.ID == recordID)
                     .FirstOrDefaultAsync();
-
-                //return Record;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting Candidate (AcademicYear: {academicYear}, CandidateRegistrationStatusID: {candidateRegistrationStatusID}, StudentType: {studentType}, StudentRefs: {recordID.ToString()})");
+                _logger.LogError(ex, $"Error getting Candidate: {recordID.ToString()})");
                 throw; // let the middleware return a formatted response
             }
 
@@ -195,40 +97,22 @@ namespace eSignUpEBSAPI.Services
 
         public async Task<List<CandidateModel>?> GetManyAsync(IEnumerable<int>? ids)
         {
-            SettingsExportModel exportModel = new SettingsExportModel();
-            exportModel = _configuration.GetSection("Export").Get<SettingsExportModel>() ?? new SettingsExportModel();
-
-            string? academicYear = exportModel.AcademicYear;
-            int? candidateRegistrationStatusID = exportModel.CandidateRegistrationStatusID;
-            string? studentType = exportModel.StudentType;
-            FormattableString sql = null!;
-
             if (ids == null || !ids.Any())
                 return new List<CandidateModel>();
 
             var idsCsv = string.Join(",", ids);
+            var idList = ids.ToList();
 
             try
             {
-                if (exportModel is not null && academicYear != null && candidateRegistrationStatusID > 0 && studentType != null)
-                    sql =
-                     $@"
-                    EXEC SPR_ESU_ESignUpCandidate 
-                        @AcademicYear = {academicYear}, 
-                        @CandidateRegistrationStatusID = {candidateRegistrationStatusID}, 
-                        @StudentType = {studentType},
-                        @StudentRefs = {idsCsv}";
-
                 Candidates = await _context.Candidate
-                    .FromSqlInterpolated(sql)
                     .AsNoTracking()
+                    .Where(c => idList.Contains(c.ID))
                     .ToListAsync();
-
-                //return Records;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting Candidate (AcademicYear: {academicYear}, CandidateRegistrationStatusID: {candidateRegistrationStatusID}, StudentType: {studentType}, StudentRefs: {idsCsv})");
+                _logger.LogError(ex, $"Error getting Candidates: {idsCsv})");
                 throw; // let the middleware return a formatted response
             }
 
@@ -288,6 +172,30 @@ namespace eSignUpEBSAPI.Services
                     await conn.OpenAsync();
                     await using var transaction = await _context.Database.BeginTransactionAsync();
 
+                    //Add missing IDs for navigation properties
+                    if (newRecord.CandidateNotes != null)
+                    {
+                        foreach (var n in newRecord.CandidateNotes)
+                        {
+                            n.CandidateID = newRecord.ID;
+                        }
+                    }
+
+                    if (newRecord.CandidateQualifications != null)
+                    {
+                        foreach (var q in newRecord.CandidateQualifications)
+                        {
+                            q.CandidateID = newRecord.ID;
+                        }
+                    }
+
+                    var notesToInsert = newRecord.CandidateNotes?.ToList() ?? new List<CandidateNoteModel>();
+                    var qualificationsToInsert = newRecord.CandidateQualifications?.ToList() ?? new List<CandidateQualificationModel>();
+
+                    // Detach navigation properties from the candidate before adding it
+                    newRecord.CandidateNotes = null;
+                    newRecord.CandidateQualifications = null;
+
                     try
                     {
                         await DatabaseHelper.InsertWithIdentityAsync<CandidateModel>(_context, async () =>
@@ -295,6 +203,26 @@ namespace eSignUpEBSAPI.Services
                             _context.Candidate?.Add(newRecord);
                             await _context.SaveChangesAsync();
                         });
+
+                        // Add Notes with explicit IDs if any
+                        if (notesToInsert.Any())
+                        {
+                            await DatabaseHelper.InsertWithIdentityAsync<CandidateNoteModel>(_context, async () =>
+                            {
+                                await _context.Set<CandidateNoteModel>().AddRangeAsync(notesToInsert);
+                                await _context.SaveChangesAsync();
+                            });
+                        }
+
+                        // Add Qualifications with explicit IDs if any
+                        if (notesToInsert.Any())
+                        {
+                            await DatabaseHelper.InsertWithIdentityAsync<CandidateQualificationModel>(_context, async () =>
+                            {
+                                await _context.Set<CandidateQualificationModel>().AddRangeAsync(qualificationsToInsert);
+                                await _context.SaveChangesAsync();
+                            });
+                        }
 
                         await transaction.CommitAsync();
                     }
@@ -521,12 +449,7 @@ namespace eSignUpEBSAPI.Services
 
         public async Task<List<SchemaModel>?> GetSchema()
         {
-            SettingsExportModel exportModel = new SettingsExportModel();
-            exportModel = _configuration.GetSection("Export").Get<SettingsExportModel>() ?? new SettingsExportModel();
-
-            string? academicYear = exportModel.AcademicYear;
-            int? candidateRegistrationStatusID = exportModel.CandidateRegistrationStatusID;
-            string? studentType = exportModel.StudentType;
+            const string tableName = "Candidate";
 
             List<SchemaModel> schemaList = new List<SchemaModel>();
 
@@ -535,14 +458,12 @@ namespace eSignUpEBSAPI.Services
             try
             {
                 using var cmd = conn.CreateCommand();
-                cmd.CommandText = "SPR_ESU_ESignUpCandidate";
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = $"SELECT TOP (0) * FROM [{tableName}]";
+                cmd.CommandType = System.Data.CommandType.Text;
 
-                var p1 = cmd.CreateParameter(); p1.ParameterName = "@AcademicYear"; p1.Value = academicYear; cmd.Parameters.Add(p1);
-                var p2 = cmd.CreateParameter(); p2.ParameterName = "@CandidateRegistrationStatusID"; p2.Value = candidateRegistrationStatusID; cmd.Parameters.Add(p2);
-                var p3 = cmd.CreateParameter(); p3.ParameterName = "@StudentType"; p3.Value = studentType; cmd.Parameters.Add(p3);
+                
 
-                using var reader = await cmd.ExecuteReaderAsync(System.Data.CommandBehavior.SingleRow);
+                using var reader = await cmd.ExecuteReaderAsync(System.Data.CommandBehavior.SchemaOnly | System.Data.CommandBehavior.KeyInfo);
                 var cols = reader.GetColumnSchema();
                 foreach (var c in cols)
                 {
