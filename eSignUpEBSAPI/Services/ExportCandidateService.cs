@@ -278,15 +278,78 @@ namespace eSignUpEBSAPI.Services
                     await conn.OpenAsync();
                     await using var transaction = await _context.Database.BeginTransactionAsync();
 
+                    //Add missing IDs for navigation properties
+                    if (newRecords != null)
+                    {
+                        foreach (var record in newRecords)
+                        {
+                            if (record.CandidateNotes != null)
+                            {
+                                foreach (var n in record.CandidateNotes)
+                                {
+                                    n.CandidateID = record.ID;
+                                }
+                            }
+                            if (record.CandidateQualifications != null)
+                            {
+                                foreach (var q in record.CandidateQualifications)
+                                {
+                                    q.CandidateID = record.ID;
+                                }
+                            }
+                        }
+                    }
+
+                    var notesToInsert = newRecords?
+                        .Where(r => r.CandidateNotes != null)
+                        .SelectMany(r => r.CandidateNotes!)
+                        .ToList();
+
+                    var qualificationsToInsert = newRecords?
+                        .Where(r => r.CandidateQualifications != null)
+                        .SelectMany(r => r.CandidateQualifications!)
+                        .ToList();
+
+                    // Detach navigation properties from the candidates before adding them
+                    if (newRecords != null)
+                        foreach (var record in newRecords)
+                        {
+                            record.CandidateNotes = null;
+                            record.CandidateQualifications = null;
+                        }
+
                     try
                     {
-                        await DatabaseHelper.InsertWithIdentityAsync<CandidateModel>(_context, async () =>
+                        if (newRecords != null)
                         {
-                            _context.Candidate?.AddRangeAsync(newRecords);
-                            await _context.SaveChangesAsync();
-                        });
+                            await DatabaseHelper.InsertWithIdentityAsync<CandidateModel>(_context, async () =>
+                            {
+                                _context.Candidate?.AddRangeAsync(newRecords);
+                                await _context.SaveChangesAsync();
+                            });
 
-                        await transaction.CommitAsync();
+                            // Add Notes with explicit IDs if any
+                            if (notesToInsert != null && notesToInsert.Any())
+                            {
+                                await DatabaseHelper.InsertWithIdentityAsync<CandidateNoteModel>(_context, async () =>
+                                {
+                                    await _context.Set<CandidateNoteModel>().AddRangeAsync(notesToInsert);
+                                    await _context.SaveChangesAsync();
+                                });
+                            }
+
+                            // Add Qualifications with explicit IDs if any
+                            if (qualificationsToInsert != null && qualificationsToInsert.Any())
+                            {
+                                await DatabaseHelper.InsertWithIdentityAsync<CandidateQualificationModel>(_context, async () =>
+                                {
+                                    await _context.Set<CandidateQualificationModel>().AddRangeAsync(qualificationsToInsert);
+                                    await _context.SaveChangesAsync();
+                                });
+                            }
+
+                            await transaction.CommitAsync();
+                        }
                     }
                     catch
                     {
@@ -300,6 +363,7 @@ namespace eSignUpEBSAPI.Services
                 }
                 else
                 {
+                    // Non-SQLServer providers won't support IDENTITY_INSERT; fall back to normal add
                     await _context.Candidate!.AddRangeAsync(newRecords);
                     await _context.SaveChangesAsync();
                 }

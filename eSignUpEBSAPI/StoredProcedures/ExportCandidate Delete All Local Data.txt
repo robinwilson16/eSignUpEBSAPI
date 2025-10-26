@@ -1,0 +1,17 @@
+﻿DELETE FROM EnglishMathsComponent
+DELETE FROM HouseholdSituation
+DELETE FROM OnboardingDocument
+DELETE FROM PlacedRecruitment
+DELETE FROM LLDDAndHealthProblemPeopleSoft
+DELETE FROM LLDDAndHealthProblem
+DELETE FROM EmploymentStatusMonitoring
+DELETE FROM LearnerEmploymentStatus
+DELETE FROM EnglishAndMathsQualification
+DELETE FROM CustomField
+DELETE FROM ContactPreference
+DELETE FROM CandidateQualification
+DELETE FROM CandidateNote
+DELETE FROM CandidateDocument
+DELETE FROM ApprenticeshipEmployer
+DELETE FROM Candidate
+DELETE FROM CandidateExtraFields
