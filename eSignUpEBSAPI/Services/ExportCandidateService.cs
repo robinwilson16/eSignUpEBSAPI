@@ -502,11 +502,26 @@ namespace eSignUpEBSAPI.Services
 
         public async Task<List<CandidateModel>?> DeleteAll()
         {
-            var recordsToDelete = GetAll();
+            var recordsToDelete = await GetAllAsync();
             if (recordsToDelete is null)
                 return null;
 
-            await _context.Database.ExecuteSqlRawAsync("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE Candidate;");
+            bool? clearResult = null;
+            try
+            {
+                clearResult = await DatabaseHelper.ClearTables(_context, _logger);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting all Records: {ex.Message}");
+                throw; // let the middleware return a formatted response
+            }
+
+            if (clearResult != true)
+            {
+                _logger.LogError($"Error deleting all Records - ClearTables returned false");
+                return null;
+            }
 
             return recordsToDelete;
         }

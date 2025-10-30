@@ -514,7 +514,7 @@ namespace eSignUpEBSAPI.Services
             if (recordsToDelete is null)
                 return null;
 
-            await _context.Database.ExecuteSqlRawAsync("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE Candidate;");
+            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE Candidate;");
 
             return recordsToDelete;
         }

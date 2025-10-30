@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,9 @@ namespace eSignUpEBSAPI.Models.ExportCandidates
 {
     public class CandidateExtraFieldsModel
     {
+        [Key]
         [JsonIgnore]
-        public int ID { get; set; }
+        public int CandidateID { get; set; }
 
         public string? ApprenticeshipVacancy { get; set; }
         public string? PreviouslyStudiedInUK { get; set; }
@@ -56,5 +58,8 @@ namespace eSignUpEBSAPI.Models.ExportCandidates
         }
 
         public string? WorkExperience { get; set; }
+
+        [JsonIgnore]
+        public CandidateModel? Candidate { get; set; }
     }
 }

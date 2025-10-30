@@ -13,5 +13,23 @@ DELETE FROM CandidateQualification
 DELETE FROM CandidateNote
 DELETE FROM CandidateDocument
 DELETE FROM ApprenticeshipEmployer
-DELETE FROM Candidate
 DELETE FROM CandidateExtraFields
+DELETE FROM Candidate
+
+DBCC CHECKIDENT ('EnglishMathsComponent', RESEED, 0);
+DBCC CHECKIDENT ('HouseholdSituation', RESEED, 0);
+DBCC CHECKIDENT ('OnboardingDocument', RESEED, 0);
+DBCC CHECKIDENT ('PlacedRecruitment', RESEED, 0);
+DBCC CHECKIDENT ('LLDDAndHealthProblemPeopleSoft', RESEED, 0);
+DBCC CHECKIDENT ('LLDDAndHealthProblem', RESEED, 0);
+DBCC CHECKIDENT ('EmploymentStatusMonitoring', RESEED, 0);
+DBCC CHECKIDENT ('LearnerEmploymentStatus', RESEED, 0);
+DBCC CHECKIDENT ('EnglishAndMathsQualification', RESEED, 0);
+DBCC CHECKIDENT ('CustomField', RESEED, 0);
+--DBCC CHECKIDENT ('ContactPreference', RESEED, 0);
+DBCC CHECKIDENT ('CandidateQualification', RESEED, 0);
+DBCC CHECKIDENT ('CandidateNote', RESEED, 0);
+DBCC CHECKIDENT ('CandidateDocument', RESEED, 0);
+DBCC CHECKIDENT ('ApprenticeshipEmployer', RESEED, 0);
+--DBCC CHECKIDENT ('CandidateExtraFields', RESEED, 0);
+DBCC CHECKIDENT ('Candidate', RESEED, 0);

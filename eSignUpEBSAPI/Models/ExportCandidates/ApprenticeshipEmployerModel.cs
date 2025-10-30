@@ -16,9 +16,6 @@ namespace eSignUpEBSAPI.Models.ExportCandidates
         [JsonIgnore]
         public int ID { get; set; }
 
-        [JsonIgnore]
-        public int VacancyID { get; set; }
-
         [JsonPropertyName("employerID")]
         public string? EmployerID { get; set; }
 
@@ -50,6 +47,8 @@ namespace eSignUpEBSAPI.Models.ExportCandidates
         public string? VacancyEmployerSiteTown { get; set; }
         public string? VacancyEmployerSitePostCode { get; set; }
 
+        [JsonIgnore]
+        public int PlacedRecruitmentID { get; set; }
         [JsonIgnore]
         public PlacedRecruitmentModel? PlacedRecruitment { get; set; }
     }

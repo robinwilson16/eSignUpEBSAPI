@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eSignUpEBSAPI.Data;
 
@@ -10,9 +11,11 @@ using eSignUpEBSAPI.Data;
 namespace eSignUpEBSAPI.Migrations
 {
     [DbContext(typeof(ExportCandidatesDbContext))]
-    partial class ExportCandidatesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027143556_Add CandidateID to ApprenticeshipEmployer")]
+    partial class AddCandidateIDtoApprenticeshipEmployer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace eSignUpEBSAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("CandidateID")
+                        .HasColumnType("int");
+
                     b.Property<string>("EDRSNumber")
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "edrsNumber");
@@ -39,9 +45,6 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlacedRecruitmentID")
-                        .HasColumnType("int");
 
                     b.Property<string>("VacancyEmployerSiteAddress1")
                         .HasColumnType("nvarchar(max)");
@@ -58,9 +61,14 @@ namespace eSignUpEBSAPI.Migrations
                     b.Property<string>("VacancyEmployerSiteTown")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VacancyID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("PlacedRecruitmentID")
+                    b.HasIndex("CandidateID");
+
+                    b.HasIndex("VacancyID")
                         .IsUnique();
 
                     b.ToTable("ApprenticeshipEmployer");
@@ -940,11 +948,19 @@ namespace eSignUpEBSAPI.Migrations
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.ApprenticeshipEmployerModel", b =>
                 {
-                    b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.PlacedRecruitmentModel", "PlacedRecruitment")
-                        .WithOne("ApprenticeshipEmployer")
-                        .HasForeignKey("eSignUpEBSAPI.Models.ExportCandidates.ApprenticeshipEmployerModel", "PlacedRecruitmentID")
+                    b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", "Candidate")
+                        .WithMany()
+                        .HasForeignKey("CandidateID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.PlacedRecruitmentModel", "PlacedRecruitment")
+                        .WithOne("ApprenticeshipEmployer")
+                        .HasForeignKey("eSignUpEBSAPI.Models.ExportCandidates.ApprenticeshipEmployerModel", "VacancyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Candidate");
 
                     b.Navigation("PlacedRecruitment");
                 });

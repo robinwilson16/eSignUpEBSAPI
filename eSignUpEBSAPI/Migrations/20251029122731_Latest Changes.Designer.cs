@@ -11,8 +11,8 @@ using eSignUpEBSAPI.Data;
 namespace eSignUpEBSAPI.Migrations
 {
     [DbContext(typeof(ExportCandidatesDbContext))]
-    [Migration("20251022164921_Create eSignUp Tables in eSignUp database")]
-    partial class CreateeSignUpTablesineSignUpdatabase
+    [Migration("20251029122731_Latest Changes")]
+    partial class LatestChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,11 +105,8 @@ namespace eSignUpEBSAPI.Migrations
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateExtraFieldsModel", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("CandidateID")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("ActualGrade")
                         .HasColumnType("nvarchar(max)");
@@ -153,7 +150,7 @@ namespace eSignUpEBSAPI.Migrations
                     b.Property<string>("WorkExperience")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("CandidateID");
 
                     b.ToTable("CandidateExtraFields");
                 });
@@ -193,9 +190,6 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.PrimitiveCollection<string>("CandidateEligibilities")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CandidateExtraFieldsID")
-                        .HasColumnType("int");
 
                     b.Property<string>("CandidateID")
                         .HasColumnType("nvarchar(max)");
@@ -415,8 +409,6 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CandidateExtraFieldsID");
-
                     b.ToTable("Candidate");
                 });
 
@@ -428,7 +420,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("CandidateID")
+                    b.Property<int>("CandidateID")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -460,7 +452,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("CandidateID")
+                    b.Property<int>("CandidateID")
                         .HasColumnType("int");
 
                     b.Property<string>("DateOfAward")
@@ -644,7 +636,7 @@ namespace eSignUpEBSAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("TotalHours")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.HasKey("ID");
 
@@ -881,7 +873,7 @@ namespace eSignUpEBSAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("PlannedSkillScanHours")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("ProgrammeCode")
                         .HasColumnType("nvarchar(max)");
@@ -930,7 +922,7 @@ namespace eSignUpEBSAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("TotalRPLOTJHours")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("TrainingPlanOTJHours")
                         .HasColumnType("nvarchar(max)")
@@ -969,20 +961,24 @@ namespace eSignUpEBSAPI.Migrations
                     b.Navigation("Candidate");
                 });
 
-            modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", b =>
+            modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateExtraFieldsModel", b =>
                 {
-                    b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.CandidateExtraFieldsModel", "CandidateExtraFields")
-                        .WithMany()
-                        .HasForeignKey("CandidateExtraFieldsID");
+                    b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", "Candidate")
+                        .WithOne("CandidateExtraFields")
+                        .HasForeignKey("eSignUpEBSAPI.Models.ExportCandidates.CandidateExtraFieldsModel", "CandidateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CandidateExtraFields");
+                    b.Navigation("Candidate");
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateNoteModel", b =>
                 {
                     b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", "Candidate")
                         .WithMany("CandidateNotes")
-                        .HasForeignKey("CandidateID");
+                        .HasForeignKey("CandidateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Candidate");
                 });
@@ -991,7 +987,9 @@ namespace eSignUpEBSAPI.Migrations
                 {
                     b.HasOne("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", "Candidate")
                         .WithMany("CandidateQualifications")
-                        .HasForeignKey("CandidateID");
+                        .HasForeignKey("CandidateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Candidate");
                 });
@@ -1098,6 +1096,8 @@ namespace eSignUpEBSAPI.Migrations
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", b =>
                 {
                     b.Navigation("CandidateDocuments");
+
+                    b.Navigation("CandidateExtraFields");
 
                     b.Navigation("CandidateNotes");
 
