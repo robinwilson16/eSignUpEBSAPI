@@ -314,7 +314,8 @@ BEGIN
 					WHEN PU.PROGRESS_STATUS IN ( 'A', 'F', 'W', 'T' ) AND UQA.QUAL_CODE IS NOT NULL THEN 'Y'
 					ELSE 'N'
 				END
-			)
+			),
+		ESignUpStatus = PU.USER_8
 		INTO #EnrolsOrApps
 	FROM ebslive.dbo.UNIT_INSTANCE_OCCURRENCES UIO
 	INNER JOIN #CurrentYear CY
@@ -597,6 +598,7 @@ BEGIN
 		ENR.PlannedEEPHours,
 		ENR.PlannedTLevelHours,
 		ENR.IncludeInILR,
+		ENR.ESignUpStatus,
 		CountAsStart = 
 			CASE
 				WHEN ENR.CompletionStatusCode NOT IN ( '1', '2', '3' ) THEN 'N'
@@ -731,6 +733,7 @@ BEGIN
 		--AND ENR.CountAsStart = 'Y'
 		AND P.PERSONAL_EMAIL IS NOT NULL --Email is Required
 		AND ENR.FundModelCode = 'App' --Apprentices Only
+		AND LEFT ( ENR.ESignUpStatus, 1 ) = 'Y' --eSignUp Status Against Application in EBS
 		AND PLR.GRADE IS NOT NULL
 	ORDER BY
 		P.SURNAME,

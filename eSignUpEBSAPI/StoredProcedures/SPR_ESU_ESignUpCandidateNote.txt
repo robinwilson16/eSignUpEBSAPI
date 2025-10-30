@@ -314,7 +314,8 @@ BEGIN
 					WHEN PU.PROGRESS_STATUS IN ( 'A', 'F', 'W', 'T' ) AND UQA.QUAL_CODE IS NOT NULL THEN 'Y'
 					ELSE 'N'
 				END
-			)
+			),
+		ESignUpStatus = PU.USER_8
 		INTO #EnrolsOrApps
 	FROM ebslive.dbo.UNIT_INSTANCE_OCCURRENCES UIO
 	INNER JOIN #CurrentYear CY
@@ -597,6 +598,7 @@ BEGIN
 		ENR.PlannedEEPHours,
 		ENR.PlannedTLevelHours,
 		ENR.IncludeInILR,
+		ENR.ESignUpStatus,
 		CountAsStart = 
 			CASE
 				WHEN ENR.CompletionStatusCode NOT IN ( '1', '2', '3' ) THEN 'N'
@@ -707,7 +709,7 @@ BEGIN
 		CreatedOn = N.CREATED_DATE,
 		--LastUpdatedBy = STFU.FES_STAFF_CODE,
 		--CreatedNoteUserID = STFC.FES_STAFF_CODE,
-		LastUpdatedBy = CASE WHEN N.UPDATED_DATE IS NOT NULL THEN 1 ELSE NULL END,
+		LastUpdatedBy = 1,
 		CreatedNoteUserID = 1,
 		CandidateID = CAST ( P.PERSON_CODE AS INT )
 	FROM ebslive.dbo.PEOPLE P
@@ -734,6 +736,7 @@ BEGIN
 		ENR.RowNum = 1
 		--AND ENR.CountAsStart = 'Y'
 		AND ENR.FundModelCode = 'App' --Apprentices Only
+		AND LEFT ( ENR.ESignUpStatus, 1 ) = 'Y' --eSignUp Status Against Application in EBS
 
 	UNION ALL
 
@@ -744,7 +747,7 @@ BEGIN
 		CreatedOn = N.CREATED_DATE,
 		--LastUpdatedBy = STFU.FES_STAFF_CODE,
 		--CreatedNoteUserID = STFC.FES_STAFF_CODE,
-		LastUpdatedBy = CASE WHEN N.UPDATED_DATE IS NOT NULL THEN 1 ELSE NULL END,
+		LastUpdatedBy = 1,
 		CreatedNoteUserID = 1,
 		CandidateID = CAST ( P.PERSON_CODE AS INT )
 	FROM ebslive.dbo.PEOPLE P
@@ -772,6 +775,7 @@ BEGIN
 		--AND ENR.CountAsStart = 'Y'
 		AND P.PERSONAL_EMAIL IS NOT NULL --Email is Required
 		AND ENR.FundModelCode = 'App' --Apprentices Only
+		AND LEFT ( ENR.ESignUpStatus, 1 ) = 'Y' --eSignUp Status Against Application in EBS
 	
 	ORDER BY
 		CandidateID,

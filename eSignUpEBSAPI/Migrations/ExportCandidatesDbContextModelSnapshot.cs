@@ -63,7 +63,7 @@ namespace eSignUpEBSAPI.Migrations
                     b.HasIndex("PlacedRecruitmentID")
                         .IsUnique();
 
-                    b.ToTable("ApprenticeshipEmployer");
+                    b.ToTable("ApprenticeshipEmployer", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateDocumentModel", b =>
@@ -97,7 +97,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("CandidateDocument");
+                    b.ToTable("CandidateDocument", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateExtraFieldsModel", b =>
@@ -149,7 +149,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasKey("CandidateID");
 
-                    b.ToTable("CandidateExtraFields");
+                    b.ToTable("CandidateExtraFields", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateModel", b =>
@@ -406,7 +406,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Candidate");
+                    b.ToTable("Candidate", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateNoteModel", b =>
@@ -438,7 +438,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("CandidateNote");
+                    b.ToTable("CandidateNote", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CandidateQualificationModel", b =>
@@ -478,7 +478,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("CandidateQualification");
+                    b.ToTable("CandidateQualification", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.ContactPreferenceModel", b =>
@@ -502,7 +502,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("ContactPreference");
+                    b.ToTable("ContactPreference", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.CustomFieldModel", b =>
@@ -529,7 +529,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("CustomField");
+                    b.ToTable("CustomField", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.EmploymentStatusMonitoringModel", b =>
@@ -559,7 +559,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("LearnerEmploymentStatusID");
 
-                    b.ToTable("EmploymentStatusMonitoring");
+                    b.ToTable("EmploymentStatusMonitoring", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.EnglishAndMathsQualificationModel", b =>
@@ -589,7 +589,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("EnglishAndMathsQualification");
+                    b.ToTable("EnglishAndMathsQualification", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.EnglishMathsComponentModel", b =>
@@ -639,7 +639,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("PlacedRecruitmentID");
 
-                    b.ToTable("EnglishMathsComponent");
+                    b.ToTable("EnglishMathsComponent", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.HouseholdSituationModel", b =>
@@ -666,7 +666,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("PlacedRecruitmentID");
 
-                    b.ToTable("HouseholdSituation");
+                    b.ToTable("HouseholdSituation", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.LLDDAndHealthProblemModel", b =>
@@ -695,7 +695,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("LLDDAndHealthProblem");
+                    b.ToTable("LLDDAndHealthProblem", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.LLDDAndHealthProblemPeopleSoftModel", b =>
@@ -724,7 +724,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("LLDDAndHealthProblemPeopleSoft");
+                    b.ToTable("LLDDAndHealthProblemPeopleSoft", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.LearnerEmploymentStatusModel", b =>
@@ -745,7 +745,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("LearnerEmploymentStatus");
+                    b.ToTable("LearnerEmploymentStatus", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.OnboardingDocumentModel", b =>
@@ -781,7 +781,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("PlacedRecruitmentID");
 
-                    b.ToTable("OnboardingDocument");
+                    b.ToTable("OnboardingDocument", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.PlacedRecruitmentModel", b =>
@@ -935,7 +935,7 @@ namespace eSignUpEBSAPI.Migrations
 
                     b.HasIndex("CandidateID");
 
-                    b.ToTable("PlacedRecruitment");
+                    b.ToTable("PlacedRecruitment", (string)null);
                 });
 
             modelBuilder.Entity("eSignUpEBSAPI.Models.ExportCandidates.ApprenticeshipEmployerModel", b =>

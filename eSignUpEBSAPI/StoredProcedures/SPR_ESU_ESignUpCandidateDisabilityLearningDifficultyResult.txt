@@ -314,7 +314,8 @@ BEGIN
 					WHEN PU.PROGRESS_STATUS IN ( 'A', 'F', 'W', 'T' ) AND UQA.QUAL_CODE IS NOT NULL THEN 'Y'
 					ELSE 'N'
 				END
-			)
+			),
+		ESignUpStatus = PU.USER_8
 		INTO #EnrolsOrApps
 	FROM ebslive.dbo.UNIT_INSTANCE_OCCURRENCES UIO
 	INNER JOIN #CurrentYear CY
@@ -597,6 +598,7 @@ BEGIN
 		ENR.PlannedEEPHours,
 		ENR.PlannedTLevelHours,
 		ENR.IncludeInILR,
+		ENR.ESignUpStatus,
 		CountAsStart = 
 			CASE
 				WHEN ENR.CompletionStatusCode NOT IN ( '1', '2', '3' ) THEN 'N'
@@ -703,60 +705,9 @@ BEGIN
 	SELECT
 		ID = CAST ( DIS.ID AS INT ),
 		CandidateID = CAST ( P.PERSON_CODE AS INT ),
-		CandidateDisabilityLearningDifficultiesID =
-			CASE
-				DISN.LOW_VALUE
-				WHEN '15' THEN 12 --Asperger's syndrome > Asperger's syndrome
-				WHEN '14' THEN 11 --Autism spectrum disorder > Autism spectrum disorder
-				WHEN '6' THEN 3 --Disability affecting mobility > Disability affecting mobility
-				WHEN '18' THEN 22 --Down Syndrome > Down Syndrome
-				WHEN '13' THEN 10 --Dyscalculia > Dyscalculia
-				WHEN '12' THEN 9 --Dyslexia > Dyslexia
-				WHEN '5' THEN 2 --Hearing impairment > Hearing impairment
-				WHEN '9' THEN 6 --Mental health difficulty > Mental health difficulty
-				WHEN '10' THEN 7 --Moderate learning difficulty > Moderate learning difficulty
-				WHEN '99' THEN 21 --Not provided > Not provided
-				WHEN '97' THEN 19 --Other disability > Other disability
-				WHEN '96' THEN 18 --Other learning difficulty / HE - A disability, impairment or medical condition that is not listed above > Other learning difficulty
-				WHEN '95' THEN 17 --Other medical condition (for example epilepsy, asthma, diabetes) > Other medical condition (for example epilepsy, asthma, diabetes)
-				WHEN '93' THEN 15 --Other physical disability > Other physical disability
-				WHEN '94' THEN 16 --Other specific learning difficulty (e.g. Dyspraxia) > Other specific learning difficulty (e.g. Dyspraxia)
-				WHEN '98' THEN 20 --Prefer not to say > Prefer not to say
-				WHEN '7' THEN 4 --Profound complex disabilities > Profound complex disabilities
-				WHEN '11' THEN 8 --Severe learning difficulty > Severe learning difficulty
-				WHEN '8' THEN 5 --Social and emotional difficulties > Social and emotional difficulties
-				WHEN '17' THEN 14 --Speech, Language and Communication Needs > Speech, Language and Communication Needs
-				WHEN '16' THEN 13 --Temporary disability after illness (for example post-viral) or accident > Temporary disability after illness (for example post-viral) or accident
-				WHEN '4' THEN 1 --Visual impairment > Vision impairment
-				ELSE NULL
-			END,
-		Name = 
-			CASE
-				DISN.LOW_VALUE
-				WHEN '15' THEN 'Asperger''s syndrome'
-				WHEN '14' THEN 'Autism spectrum disorder'
-				WHEN '6' THEN 'Disability affecting mobility'
-				WHEN '18' THEN 'Down Syndrome'
-				WHEN '13' THEN 'Dyscalculia'
-				WHEN '12' THEN 'Dyslexia'
-				WHEN '5' THEN 'Hearing impairment'
-				WHEN '9' THEN 'Mental health difficulty'
-				WHEN '10' THEN 'Moderate learning difficulty'
-				WHEN '99' THEN 'Not provided'
-				WHEN '97' THEN 'Other disability'
-				WHEN '96' THEN 'Other learning difficulty'
-				WHEN '95' THEN 'Other medical condition (for example epilepsy, asthma, diabetes)'
-				WHEN '93' THEN 'Other physical disability'
-				WHEN '94' THEN 'Other specific learning difficulty (e.g. Dyspraxia)'
-				WHEN '98' THEN 'Prefer not to say'
-				WHEN '7' THEN 'Profound complex disabilities'
-				WHEN '11' THEN 'Severe learning difficulty'
-				WHEN '8' THEN 'Social and emotional difficulties'
-				WHEN '17' THEN 'Speech, Language and Communication Needs'
-				WHEN '16' THEN 'Temporary disability after illness (for example post-viral) or accident'
-				WHEN '4' THEN 'Vision impairment'
-				ELSE NULL
-			END
+		CandidateDisabilityLearningDifficultiesID = CAST ( NULL AS INT ),
+		Name = CAST ( NULL AS VARCHAR(50) ),
+		CandidateDisabilityLearningDifficultiesMapping = DISN.LOW_VALUE
 	FROM ebslive.dbo.PEOPLE P
 	INNER JOIN #CurrentYear CY
 		ON 1 = 1
@@ -777,6 +728,7 @@ BEGIN
 		--AND ENR.CountAsStart = 'Y'
 		AND P.PERSONAL_EMAIL IS NOT NULL --Email is Required
 		AND ENR.FundModelCode = 'App' --Apprentices Only
+		AND LEFT ( ENR.ESignUpStatus, 1 ) = 'Y' --eSignUp Status Against Application in EBS
 	ORDER BY
 		P.SURNAME,
 		P.FORENAME,

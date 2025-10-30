@@ -85,6 +85,10 @@ namespace eSignUpEBSAPI.Services
                         //.AsNoTracking()
                         .ToListAsync();
 
+                    //Map enum fields
+                    if (Candidates != null)
+                        Candidates = CandidateHelper.MapCandidateEnums(Candidates);
+
                     //Bring in related data
                     if (Candidates != null)
                     {
@@ -140,6 +144,10 @@ namespace eSignUpEBSAPI.Services
                             .FromSqlInterpolated(sql)
                             //.AsNoTracking()
                             .ToListAsync();
+
+                        //Map enum fields
+                        if (CandidateDisabilityLearningDifficultyResults != null)
+                            CandidateDisabilityLearningDifficultyResults = DisabilityLearningDifficultyResultHelper.MapDisabilityLearningDifficultyResultEnums(CandidateDisabilityLearningDifficultyResults);
                     }
                 }
             }

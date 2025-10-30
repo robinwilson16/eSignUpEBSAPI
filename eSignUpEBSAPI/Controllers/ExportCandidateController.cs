@@ -246,8 +246,9 @@ namespace eSignUpEBSAPI.Controllers
             try
             {
                 Records = await _apiService.DeleteAll();
-                if (Records is null)
-                    return Problem(detail: "Unable to delete records", title: "DeleteAll failed", statusCode: 500);
+                //Delete All does not return records
+                //if (Records is null)
+                //    return Problem(detail: "Unable to delete records", title: "DeleteAll failed", statusCode: 500);
 
                 //return AcceptedAtAction(nameof(GetAllAsync), new { }, null);
                 return NoContent();
