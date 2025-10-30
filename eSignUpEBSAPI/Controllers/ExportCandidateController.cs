@@ -243,12 +243,19 @@ namespace eSignUpEBSAPI.Controllers
             if (confirm != "Y")
                 return BadRequest("The Request Needs To Be Confirmed with Y");
 
-            Records = await _apiService.DeleteAll();
-            if (Records is null || !Records.Any())
-                return BadRequest("Unable to Delete Records");
+            try
+            {
+                Records = await _apiService.DeleteAll();
+                if (Records is null)
+                    return Problem(detail: "Unable to delete records", title: "DeleteAll failed", statusCode: 500);
 
-            //return AcceptedAtAction(nameof(GetAllAsync), new { }, null);
-            return NoContent();
+                //return AcceptedAtAction(nameof(GetAllAsync), new { }, null);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: ex.Message, title: "DeleteAll unexpected error", statusCode: 500);
+            }
         }
 
         [HttpGet("Schema")]

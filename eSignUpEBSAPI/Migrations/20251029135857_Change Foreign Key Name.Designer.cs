@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eSignUpEBSAPI.Data;
 
@@ -10,9 +11,11 @@ using eSignUpEBSAPI.Data;
 namespace eSignUpEBSAPI.Migrations
 {
     [DbContext(typeof(ExportCandidatesDbContext))]
-    partial class ExportCandidatesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029135857_Change Foreign Key Name")]
+    partial class ChangeForeignKeyName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

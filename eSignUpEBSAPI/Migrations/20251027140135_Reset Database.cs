@@ -5,36 +5,11 @@
 namespace eSignUpEBSAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateeSignUpTablesineSignUpdatabase : Migration
+    public partial class ResetDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "CandidateExtraFields",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApprenticeshipVacancy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PreviouslyStudiedInUK = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PreviouslyStudiedAtCollege = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PreviousCollegeIDNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PriorLearningRecognition = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HomeEducated = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NoQualification = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastSchoolStartDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastSchoolLeavingDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EstimatedGrade = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ActualGrade = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateOfExam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    WorkExperience = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CandidateExtraFields", x => x.ID);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Candidate",
                 columns: table => new
@@ -120,17 +95,11 @@ namespace eSignUpEBSAPI.Migrations
                     StudentSignatureObtained = table.Column<bool>(type: "bit", nullable: true),
                     StudentSignatureObtainedDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionSetID = table.Column<int>(type: "int", nullable: true),
-                    CandidateEligibilities = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CandidateExtraFieldsID = table.Column<int>(type: "int", nullable: true)
+                    CandidateEligibilities = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Candidate", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Candidate_CandidateExtraFields_CandidateExtraFieldsID",
-                        column: x => x.CandidateExtraFieldsID,
-                        principalTable: "CandidateExtraFields",
-                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +126,36 @@ namespace eSignUpEBSAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CandidateExtraFields",
+                columns: table => new
+                {
+                    CandidateID = table.Column<int>(type: "int", nullable: false),
+                    ApprenticeshipVacancy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PreviouslyStudiedInUK = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PreviouslyStudiedAtCollege = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PreviousCollegeIDNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PriorLearningRecognition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HomeEducated = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NoQualification = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastSchoolStartDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastSchoolLeavingDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EstimatedGrade = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActualGrade = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfExam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkExperience = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CandidateExtraFields", x => x.CandidateID);
+                    table.ForeignKey(
+                        name: "FK_CandidateExtraFields_Candidate_CandidateID",
+                        column: x => x.CandidateID,
+                        principalTable: "Candidate",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CandidateNote",
                 columns: table => new
                 {
@@ -166,7 +165,7 @@ namespace eSignUpEBSAPI.Migrations
                     LastUpdatedDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CandidateID = table.Column<int>(type: "int", nullable: true)
+                    CandidateID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -175,7 +174,8 @@ namespace eSignUpEBSAPI.Migrations
                         name: "FK_CandidateNote_Candidate_CandidateID",
                         column: x => x.CandidateID,
                         principalTable: "Candidate",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,7 +191,7 @@ namespace eSignUpEBSAPI.Migrations
                     Grade = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfAward = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HighestAward = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CandidateID = table.Column<int>(type: "int", nullable: true)
+                    CandidateID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,7 +200,8 @@ namespace eSignUpEBSAPI.Migrations
                         name: "FK_CandidateQualification_Candidate_CandidateID",
                         column: x => x.CandidateID,
                         principalTable: "Candidate",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -374,8 +375,8 @@ namespace eSignUpEBSAPI.Migrations
                     EmployerContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AcademicLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsEnrolled = table.Column<bool>(type: "bit", nullable: true),
-                    TotalRPLOTJHours = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    PlannedSkillScanHours = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalRPLOTJHours = table.Column<decimal>(type: "decimal(19,4)", nullable: true),
+                    PlannedSkillScanHours = table.Column<decimal>(type: "decimal(19,4)", nullable: true),
                     CandidateID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -449,7 +450,7 @@ namespace eSignUpEBSAPI.Migrations
                     Required = table.Column<bool>(type: "bit", nullable: true),
                     StudyTowards = table.Column<bool>(type: "bit", nullable: true),
                     TakeExam = table.Column<bool>(type: "bit", nullable: true),
-                    TotalHours = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalHours = table.Column<decimal>(type: "decimal(19,4)", nullable: true),
                     FundingSource = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EndDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -515,11 +516,6 @@ namespace eSignUpEBSAPI.Migrations
                 table: "ApprenticeshipEmployer",
                 column: "VacancyID",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Candidate_CandidateExtraFieldsID",
-                table: "Candidate",
-                column: "CandidateExtraFieldsID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CandidateDocument_CandidateID",
@@ -602,6 +598,9 @@ namespace eSignUpEBSAPI.Migrations
                 name: "CandidateDocument");
 
             migrationBuilder.DropTable(
+                name: "CandidateExtraFields");
+
+            migrationBuilder.DropTable(
                 name: "CandidateNote");
 
             migrationBuilder.DropTable(
@@ -642,9 +641,6 @@ namespace eSignUpEBSAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Candidate");
-
-            migrationBuilder.DropTable(
-                name: "CandidateExtraFields");
         }
     }
 }
