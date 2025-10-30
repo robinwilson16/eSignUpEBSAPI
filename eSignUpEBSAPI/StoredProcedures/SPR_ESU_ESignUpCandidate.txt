@@ -863,7 +863,7 @@ BEGIN
 		HasEHCP = CAST ( CASE WHEN COALESCE ( LI.HAS_HEALTHCARE_PLAN, PI.HAS_HEALTHCARE_PLAN ) = 'Y' THEN 1 ELSE 0 END AS BIT ),
 		EHCPEmployerPermission = CAST ( NULL AS BIT ),
 		ListGenderIdentityID = CAST ( NULL AS INT ),
-		ListGenderIdentityMapping = GEN.FES_LONG_DESCRIPTION,
+		ListGenderIdentityMapping = GEN.LOW_VALUE,
 		MainCourseCode = ENR.CourseCode,
 		MainCourseTitle = ENR.CourseTitle
 	FROM ebslive.dbo.PEOPLE P
